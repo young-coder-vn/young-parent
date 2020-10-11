@@ -1,0 +1,3 @@
+rootProject.name = 'young-parent'
+include 'young-bean'
+

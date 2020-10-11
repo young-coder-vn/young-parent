@@ -1,0 +1,83 @@
+allprojects {
+    group = 'com.young.coder'
+    version = '0.0.1-SNAPSHOT'
+
+    apply plugin: 'java'
+    apply plugin: 'idea'
+
+    repositories {
+        mavenCentral()
+        jcenter()
+    }
+}
+
+buildscript {
+    ext {
+        springBootVersion = '2.3.4.RELEASE'
+        springManagementVersion = '1.0.10.RELEASE'
+        springDocVersion = '1.4.8'
+        commonLang3Version = '3.9'
+    }
+    repositories {
+        mavenCentral()
+        jcenter()
+    }
+
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+        classpath("io.spring.gradle:dependency-management-plugin:${springManagementVersion}")
+    }
+}
+
+subprojects {
+    apply plugin: 'io.spring.dependency-management'
+    apply plugin: 'org.springframework.boot'
+
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
+
+    def defaultEncoding = 'UTF-8'
+    tasks.withType(AbstractCompile).each { it.options.encoding = defaultEncoding }
+
+    javadoc {
+        options.encoding = defaultEncoding
+        options.addBooleanOption('Xdoclint:none', true)
+    }
+
+    compileJava.dependsOn(processResources)
+
+    springBoot {
+        buildInfo()
+    }
+
+    dependencies{
+        annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
+        annotationProcessor "org.projectlombok:lombok"
+
+        compileOnly "org.springframework.boot:spring-boot-configuration-processor"
+        compileOnly "org.projectlombok:lombok"
+
+        // SPRING DEPENDENCIES
+
+        // Utilities
+        compile group: 'org.apache.commons', name: 'commons-lang3', version: "${commonLang3Version}"
+        compile group: 'org.springdoc', name: 'springdoc-openapi-ui', version: "${springDocVersion}"
+
+
+        // TEST
+        testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    }
+
+}
+
+project(':young-bean') {
+    dependencies {
+//        implementation project(':common')
+        implementation('org.springframework.boot:spring-boot-starter-data-rest')
+        developmentOnly('org.springframework.boot:spring-boot-devtools')
+    }
+}
+
+//project(':common'){
+//
+//}
